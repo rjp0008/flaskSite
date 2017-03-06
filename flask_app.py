@@ -9,6 +9,7 @@ from matplotlib.dates import DateFormatter
 from matplotlib.figure import Figure
 from pandas import date_range, Series
 from io import StringIO
+import intergraph
 
 import rasberry_pi.routes
 
@@ -18,47 +19,9 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/random/',methods=['GET', 'POST'])
-def test():
-    data = {"text": rosie(str(random_team_member(request)).replace('[','').replace(']','').replace("'",'').replace(',','')), "response_type": "in_channel","parse":"full","link_names":1}
-    resp = jsonify(data)
-    return resp
-
-
-def random_team_member(request):
-    members = [":colosi: @colosicm ",":roberto: @perez ", ":nathan: @nwplotts ",":rosa: @wrosa ",":duke: @kevinduke ",":sean: @sean "]
-    if str(request.form['user_name']) == 'perez':
-        members.remove(":roberto: @perez ")
-    if str(request.form['user_name']) == 'colosicm':
-        members.remove(":colosi: @colosicm ")
-    if str(request.form['user_name']) == 'kevinduke':
-        members.remove(":duke: @kevinduke ")
-    if str(request.form['user_name']) == 'nwplotts':
-        members.remove(":nathan: @nwplotts ")
-    if str(request.form['user_name']) == 'sean':
-        members.remove(":sean: @sean ")
-    if str(request.form['user_name']) == 'wrosa':
-        members.remove(":rosa: @wrosa ")
-    random.shuffle(members)
-    if len(str(request.form['text'])) == 0:
-        return members[0]
-    for arguments in str(request.form['text']).split(' '):
-        for name in members:
-            if arguments in name:
-                members.remove(name)
-    try:
-        test = int(str(request.form['text']).split(' ')[0])
-        return members[:test]
-    except Exception as e:
-        return members[0]
-
-def rosie(input: str):
-    choice = random.randint(0,2)
-    if choice == 0:
-        input = input.replace(":rosa:",":rosie:")
-    if choice == 1:
-        input = input.replace(":rosa:",":will:")
-    return input
+@app.route('/random/',methods=['POST'])
+def random_route():
+    return intergraph.random_team_member(request)
 
 @app.route('/hotels/')
 @app.route('/hotels/<group>/<category>')
@@ -89,6 +52,38 @@ def north(group=None,category=None):
 @app.route('/south/<group>')
 def south(group=None,category=None):
     return geographic_finder(False,group,category)
+
+def geographic_finder(max: bool, group=None,category=None):
+    db = sqlite3.connect('hotel.db')
+    type = "max"
+    if max == False:
+        type = "min"
+    sql_string = "select "+type+"(lat) from Hotels"
+    data = ()
+    if group or category:
+        if category:
+            sql_string = sql_string + " where hotel_group=? and category=?"
+            data = ((group),(category))
+        else:
+            sql_string = sql_string + " where hotel_group=?"
+            data = ((group),)
+    cur = db.execute(sql_string,(data))
+    lat = cur.fetchone()[0]
+    print(lat)
+    cur = db.execute("SELECT * from Hotels WHERE lat='"+str(lat)+"'")
+    entries = cur.fetchall()
+    print((lat))
+    return render_template('show_entries.html', entries=entries)
+
+@app.route('/hotels/detail/<id>')
+def detail(id:str = '0'):
+    db = sqlite3.connect('hotel.db')
+    sql_string = "select * from Hotels WHERE id=?"
+    cur = db.execute(sql_string,((id),))
+    entry = cur.fetchone()
+    #site = requests.get('https://maps.googleapis.com/maps/api/staticmap?center='+str(entry[3])+','+str(entry[4])+'&zoom=12&size=400x400&key=AIzaSyDXz9d7haybjrPP6iL2V0yknNb-aKwyK8w')
+
+    return render_template('hotel_detail.html',entry = entry)
 
 @app.route('/temperature/<humidity>/<temperature>')
 def templog(humidity=None,temperature=None):
@@ -244,37 +239,6 @@ def temptesting(hours = None):
                            graphJSON=graphJSON)
 
 
-def geographic_finder(max: bool, group=None,category=None):
-    db = sqlite3.connect('hotel.db')
-    type = "max"
-    if max == False:
-        type = "min"
-    sql_string = "select "+type+"(lat) from Hotels"
-    data = ()
-    if group or category:
-        if category:
-            sql_string = sql_string + " where hotel_group=? and category=?"
-            data = ((group),(category))
-        else:
-            sql_string = sql_string + " where hotel_group=?"
-            data = ((group),)
-    cur = db.execute(sql_string,(data))
-    lat = cur.fetchone()[0]
-    print(lat)
-    cur = db.execute("SELECT * from Hotels WHERE lat='"+str(lat)+"'")
-    entries = cur.fetchall()
-    print((lat))
-    return render_template('show_entries.html', entries=entries)
-
-@app.route('/hotels/detail/<id>')
-def detail(id:str = '0'):
-    db = sqlite3.connect('hotel.db')
-    sql_string = "select * from Hotels WHERE id=?"
-    cur = db.execute(sql_string,((id),))
-    entry = cur.fetchone()
-    #site = requests.get('https://maps.googleapis.com/maps/api/staticmap?center='+str(entry[3])+','+str(entry[4])+'&zoom=12&size=400x400&key=AIzaSyDXz9d7haybjrPP6iL2V0yknNb-aKwyK8w')
-
-    return render_template('hotel_detail.html',entry = entry)
 
 if __name__ == '__main__':
     app.run()
