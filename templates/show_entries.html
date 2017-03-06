@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+  <ul class=entries>
+  {% for entry in entries %}
+    <li><strong><a href="../hotels/detail/{{ entry[0] }}">{{ entry[1] }}</a> </strong><br>
+  {% endfor %}
+      </li>
+  </ul>
+{% endblock %}

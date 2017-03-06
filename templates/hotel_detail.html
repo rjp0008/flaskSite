@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <strong><a href="{{ entry[2] }}">{{ entry[1] }}</a> </strong><br>
+    Latitude: {{ entry[3] }} &nbsp Longitude: {{ entry[4] }}<br>
+    Type: {{  entry[5] }}<br>
+    Category: {{ entry[6] }}<br>
+    Address: {{ entry[8] }}<br><br>
+<img src="https://maps.googleapis.com/maps/api/staticmap?center={{ entry[3] }},{{ entry[4] }}&zoom=12&size=400x400&key=AIzaSyDXz9d7haybjrPP6iL2V0yknNb-aKwyK8w">
+
+{% endblock %}
