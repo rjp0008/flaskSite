@@ -61,6 +61,20 @@
                 <p>After reading some blog posts, and realizing this isn't an effort in web design, I decided
                 to use githubs inline gists if I ever needed to inline code. I know I don't have an eye for visual design,
                 so using out of the box solutions that look great is the best solution for me.</p>
+                <p>The first refactoring effort I'm doing is to bring the intergraph endpoint into it's own file.
+                I created this endpoint as one of the first slack custom addins I made for my team. It's purpose is
+                pretty simple, it will return a random person on the team in a json formatted response. This
+                ties into slacks webhoob functionality to give use a /random slash command in any slack channel. Mostly this
+                is used to make someone finally getting around to doing a code review. There are some bonuses to the slash
+                command though, it will remove the requester from the pool of output options, because you can't do your own
+                code review. Also you can @tag or :emojii: tag people on the team to get them removed from the pool,
+                if they've already done one of the reviews.</p>
+                <p>In refactoring this slash command I've realized that now there is no way to arbitrarily choose any person on
+                on the team. This is because the requester will always be excluded from the pool of options. The solution
+                I came up with is to have two endpoints, a truely random person endpoint, and a code review endpoint. They are a
+                'GET' and 'POST' http request on the perezdev.com/random/ url respectively. I decided this distinction because
+                you can either get any random person, or post data to the url that excludes team members. The slack slash commands
+                have been updated on the team management page.</p>
                 <hr>
 
                 <!-- Post Content -->
