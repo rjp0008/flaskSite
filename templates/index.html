@@ -8,40 +8,20 @@
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
 </head>
-
 <body>
-
-
-
-    <!-- Page Content -->
     <div class="container">
 
         <div class="row">
 
-            <!-- Blog Post Content Column -->
             <div class="col-lg-8">
-
-                <!-- Blog Post -->
-
-                <!-- Title -->
                 <h1>Robert Perez</h1>
 
 
                 <hr>
-
-                <!-- Preview Image -->
                 <img class="img-responsive" src="{{ url_for('static',filename='me.jpg') }}" alt="">
       <hr>
 
-                <!-- Post Content -->
                 <p class="lead">Cleaning up this site.</p>
                 <p> Posted on March 6, 2017 at 7:00 PM</p>
                 <p>So this site is hosted on a flask server, specifically one of the many running
@@ -77,7 +57,6 @@
                     GET requests. I decided this distinction between GET/POST because you can either get any random person, or post data to the url that excludes team members.</p>
                 <hr>
 
-                <!-- Post Content -->
                 <p class="lead">Starting a development blog for my adventures in coding and scripting.</p>
                 <p> Posted on March 5, 2017 at 3:00 PM</p>
                 <p>I finally decided to start a personal site after reading other people's and using them as very helpful resources.
@@ -85,37 +64,19 @@
                 <p>I expect many of my initial blog posts will be summations of the work I've already done as part of different sites hosted here.
                 Most of this aforementioned work is only half completed or could be extended. Which is part of the reason I started this
                 site, to create accountability and finish up some of these projects.</p>
-
-
                 <hr>
-
-
-
             </div>
-
-
-
         </div>
-        <!-- /.row -->
-
-
-        <!-- Footer -->
         <footer>
             <div class="row">
                 <div class="col-lg-12">
                     <p>Copyright &copy; PerezDev 2017</p>
                 </div>
             </div>
-            <!-- /.row -->
         </footer>
 
     </div>
-    <!-- /.container -->
-
-    <!-- jQuery -->
     <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
-
-    <!-- Bootstrap Core JavaScript -->
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
 
 </body>
