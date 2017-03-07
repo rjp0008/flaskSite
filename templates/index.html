@@ -1,10 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+
     <title>Robert Perez</title>
+
+    <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
 </head>
+
 <body>
 
+
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Post Content Column -->
+            <div class="col-lg-8">
+
+                <!-- Blog Post -->
+
+                <!-- Title -->
+                <h1>Robert Perez</h1>
+
+
+                <hr>
+
+                <!-- Preview Image -->
+                <img class="img-responsive" src="{{ url_for('static',filename='me.jpg') }}" alt="">
+      <hr>
+
+                <!-- Post Content -->
+                <p class="lead">Cleaning up this site.</p>
+                <p> Posted on March 6, 2017 at 7:00 PM</p>
+                <p>So this site is hosted on a flask server, specifically one of the many running
+                    at <a href="https://www.pythonanywhere.com">pythonanywhere.com</a>.
+                    It's been a great (and cheap) resource, but in tooling around and just doing things for fun has resulted in my folder
+                    and file organization becoming a mess. All of my routes are in one main flask app, and the three projects
+                    I have going are all over the place in that file.
+                </p>
+                <p>Another issue with my current development path is that not much of it is in source control. I was just tooling
+                around with some basic stuff so I didn't think to bother with it. At this point though I think it's reached a
+                point where I have to start organizing and using git like I know I should.</p>
+
+                <p>Anyways my first task that gave me trouble is using css in this flask served webpage. I tried to create
+                    a css file inside the static/css directory for my site. Specifically I was creating a codeblock class to use
+                in posts. However flask was not happy with linking both bootstrap and my css file as shown below.</p>
+       <script src="https://gist.github.com/rjp0008/cd3c463b6a26d0fecf04f408b2230fca.js"></script>
+                <p>After reading some blog posts, and realizing this isn't an effort in web design, I decided
+                to use githubs inline gists if I ever needed to inline code. I know I don't have an eye for visual design,
+                so using out of the box solutions that look great is the best solution for me.</p>
+                <p>The first refactoring effort I'm doing is to bring the intergraph endpoint into it's own file.
+                I created this endpoint as one of the first slack custom addins I made for my team. It's purpose is
+                pretty simple, it will return a random person on the team in a json formatted response. This
+                ties into slacks webhoob functionality to give use a /random slash command in any slack channel. Mostly this
+                is used to make someone finally getting around to doing a code review. There are some bonuses to the slash
+                command though, it will remove the requester from the pool of output options, because you can't do your own
+                code review. Also you can @tag or :emojii: tag people on the team to get them removed from the pool,
+                if they've already done one of the reviews.</p>
+                <p>In refactoring this slash command I've realized that now there is no way to arbitrarily choose any person on
+                on the team. This is because the requester will always be excluded from the pool of options. The solution
+                I came up with is to have two endpoints, a truely random person endpoint, and a code review endpoint. They are a
+                'GET' and 'POST' http request on the perezdev.com/random/ url respectively. This was possible by marking the
+                    specified route with an extra parameter 'methods=['GET', 'POST']'. The default for flask is to olny support
+                    GET requests. I decided this distinction between GET/POST because you can either get any random person, or post data to the url that excludes team members.</p>
+                <hr>
+
+                <!-- Post Content -->
+                <p class="lead">Starting a development blog for my adventures in coding and scripting.</p>
+                <p> Posted on March 5, 2017 at 3:00 PM</p>
+                <p>I finally decided to start a personal site after reading other people's and using them as very helpful resources.
+                Hopefully something I post here will be as useful as the things I've read in the past.</p>
+                <p>I expect many of my initial blog posts will be summations of the work I've already done as part of different sites hosted here.
+                Most of this aforementioned work is only half completed or could be extended. Which is part of the reason I started this
+                site, to create accountability and finish up some of these projects.</p>
+
+
+                <hr>
+
+
+
+            </div>
+
+
+
+        </div>
+        <!-- /.row -->
+
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; PerezDev 2017</p>
+                </div>
+            </div>
+            <!-- /.row -->
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="{{ url_for('static',filename='js/jquery.js') }}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+
 </body>
+
 </html>
