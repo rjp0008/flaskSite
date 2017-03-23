@@ -1,17 +1,15 @@
 from io import BytesIO
 from flask import make_response, Flask, jsonify, render_template, request
-import random
 import sqlite3
 import datetime
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvas
 from matplotlib.dates import DateFormatter
 from matplotlib.figure import Figure
 from pandas import date_range, Series
-from io import StringIO
 from intergraph.intergraph import random_member_response
-
+import http.client
 import rasberry_pi.routes
+import secrets
 
 app = Flask(__name__)
 
@@ -81,7 +79,7 @@ def geographic_finder(max: bool, group=None, category=None):
     print(lat)
     cur = db.execute("SELECT * from Hotels WHERE lat='" + str(lat) + "'")
     entries = cur.fetchall()
-    print((lat))
+    print(lat)
     return render_template('show_entries.html', entries=entries)
 
 
@@ -96,12 +94,12 @@ def detail(id: str = '0'):
     return render_template('hotel_detail.html', entry=entry)
 
 
-@app.route('/temperature/<humidity>/<temperature>')
-def templog(humidity=None, temperature=None):
+@app.route('/temperature/<humidity>/<temperature>/<source>')
+def templog(humidity=None, temperature=None, source="rp"):
     db = sqlite3.connect('temp.db')
     c = db.cursor()
-    sql_string = "insert into TempData (temperature, humidity, date) values (?,?,?)"
-    data = ((temperature), (humidity), (datetime.datetime.now()))
+    sql_string = "insert into TempData (temperature, humidity, date,source) values (?,?,?,?)"
+    data = ((temperature), (humidity), (datetime.datetime.now()),source)
     c.execute(sql_string, data)
     db.commit()
     db.close()
@@ -170,8 +168,8 @@ def tempmap2(hours=None):
         time.append(datetime.datetime.strptime(x[3], "%Y-%m-%d %H:%M:%S.%f") - datetime.timedelta(hours=6))
     fig = Figure()
     ax = fig.add_subplot(111)
-    t, = ax.plot_date(time, smoother(temps), '-', label="t")
-    h, = ax.plot_date(time, smoother(hum), '-', label="h")
+    t, = ax.plot_date(time, (temps), '-', label="t")
+    h, = ax.plot_date(time, (hum), '-', label="h")
     ax.legend([t, h], ["Temperature (C)", "Humidity (0-100%)"], loc=3)
     ax.xaxis.set_major_formatter(DateFormatter('%m-%d %I:%M'))
     fig.autofmt_xdate()
@@ -188,15 +186,46 @@ def temp_data():
     return rasberry_pi.routes.temp_data()
 
 
+@app.route('/groupme/', methods=['GET', 'POST'])
+def brett_is_lazy():
+    import json
+    data = (json.loads(request.get_data().decode("utf-8")))
+
+    if data['name'] == "dickbott":
+        return ""
+
+    conn = http.client.HTTPSConnection("discordapp.com")
+
+    payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"content\"\r\n\r\n"+str(data['text']) + " - "+str(data['name'])+"\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"username\"\r\n\r\nlazy_brett\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
+    payload = payload.encode('utf-8')
+
+    headers = {
+        'content-type': "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+        'cache-control': "no-cache",
+        'postman-token': "76b0cd3b-5c0e-35e7-2b4a-5b6b149fae36"
+    }
+
+    conn.request("POST",
+                 "/api/webhooks/" + secrets.webhook,
+                 payload, headers)
+
+    res = conn.getresponse()
+    data = res.read()
+    print(data.decode("utf-8"))
+    return ""
+
 @app.route('/tempMap3/')
 @app.route('/tempMap3/hours=<hours>')
 def temptesting(hours=None):
     import plotly
     import json
-    import pandas as pd
-    import numpy as np
-    rng = pd.date_range('1/1/2011', periods=7500, freq='H')
-    ts = pd.Series(np.random.randn(len(rng)), index=rng)
+
+    temps = []
+    hum = []
+    time = []
+    temps2 = []
+    hum2 = []
+    time2 = []
 
     db = sqlite3.connect('temp.db')
     c = db.cursor()
@@ -207,20 +236,27 @@ def temptesting(hours=None):
     data = c.execute(sql_string)
     db.commit()
     entries = data.fetchall()
-    temps = []
-    hum = []
-    time = []
-    for x in entries:
-        temps.append(x[1])
-        hum.append(x[2])
-        time.append(datetime.datetime.strptime(x[3], "%Y-%m-%d %H:%M:%S.%f") - datetime.timedelta(hours=6))
 
+    for x in entries:
+        if x[4] == "rp":
+            temps.append(x[1])
+            hum.append(x[2])
+            time.append(datetime.datetime.strptime(x[3], "%Y-%m-%d %H:%M:%S.%f") - datetime.timedelta(hours=6))
+        if x[4] == "web":
+            temps2.append(x[1])
+            hum2.append(x[2])
+            time2.append(datetime.datetime.strptime(x[3], "%Y-%m-%d %H:%M:%S.%f") - datetime.timedelta(hours=6))
     graphs = [
         dict(
             data=[
                 dict(
                     x=time,
                     y=smoother(temps),
+                    type='line'
+                ),
+                dict(
+                    x=time2,
+                    y=smoother(temps2),
                     type='line'
                 ),
             ],
@@ -233,6 +269,11 @@ def temptesting(hours=None):
                 dict(
                     x=time,
                     y=smoother(hum),
+                    type='line'
+                ),
+                dict(
+                    x=time2,
+                    y=smoother(hum2),
                     type='line'
                 ),
             ],

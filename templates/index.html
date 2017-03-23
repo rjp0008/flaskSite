@@ -6,6 +6,7 @@
     <title>Robert Perez</title>
 
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='css/perez.css') }}" rel="stylesheet">
 
 
 </head>
@@ -21,7 +22,38 @@
                 <hr>
                 <img class="img-responsive" src="{{ url_for('static',filename='me.jpg') }}" alt="">
       <hr>
-
+                 <p class="lead">Gathering data from WeatherUnderground and plotting with Plotly </p>
+                <p> Posted on March 17, 2017 at 7:00 PM</p>
+                <p>So recently I set up a Rasberry Pi in my home office to log data from a DHT11 sensor. This is a budget
+                sensor that can get temperature and humidity data at 1 hz. That is plenty enough data for me, unfortunately
+                the sensor only has a resolution of 1 degree celsius and 1% humidity. I'm waiting on an updated sensor to get
+                here from aliexpress and I'll do a more detailed writeup about the specific set-up when that comes in.</p>
+                <p>For now, I have days worth of temperature data from my office, the result of which can probably be guessed.
+                If you want to look at the data, you can look at the recent logs I've gathered <a href="/temperatureData">here</a>
+                or a graphical representation <a href="/tempMap3/hours=24">here</a>.</p>
+                <p>For this blog post I'll be extending the graphical representation of the above data to display information
+                logged from my hometown.</p>
+                <p>The first step in this process is getting more data, and for that, I used the free service at<a href="https://www.wunderground.com/weather/api">https://www.wunderground.com</a>.
+                I compared this API to a similar one at openweathermap.org but decided the 10 calls per minute limit for wunderground was just fine for what I'm doing. My
+                initial goal is to just get weather data for myself after all, and querying the weather at home even once a minute is probably overkill. As it shouldn't change that often.</p>
+                <p>After I made my account for the API it's time to start querying it, for that I opened up the Postman chrome browser extension. A pretty great tool for exploring and testing RESTful APIs.
+                    I was able to copy the <a href="http://api.wunderground.com/api/2a340340b2e9fae1/conditions/q/CA/San_Francisco.json">example url</a> from the documentation and swap in my API key, and city state combo.
+                    It immediately came up with plenty of data in the response, which I may save and explore in a future update, but for now I verified that the temperture and humidity were the correct numbers.
+                </p>
+                <p>Now that I've found the correct URL endpoint to hit, it's time to add the calls to my python code in my rasberry pi. I've made http requests in python before, but Postman will generate the
+                    code required to make this same request in the future. I output the python 3 code in postman, which is using the http.client package to visit the url and grab the data. </p>
+                <script src="https://gist.github.com/rjp0008/1716f0acd7b4b3b3cfb9d21b35a7fd4b.js"></script>
+                <p>After decoding the response from this http request into a json object I was able to index it for the ['temp_c'] and ['relative_humidity'] data. I noticed that this API also gives you data in Fahrenheit,
+                which will end up being more precise as it looks like both C and F datapoints are only to the tenths decimal place. However all the current data points are in C so I'll have to convert the value to match the old data.
+                The conversion factor is tC = (tF - 32) * 5 / 9, which I almost remembered, but had to double check online to be sure. So after I had this data I piped it into another http request to this site, which logs the data passed
+                into a SQLite database. The only data fieldss I keep track of right now are temperture, humidity, and location(inside or outside).</p>
+                <p>Data is being logged from two points 24/7, and I wanted to graph these things against each other. Now I already have the display endpoint mentioned earlier for just the inside data, but now I need to add the new data points
+                into the graphs. My initial display engine utilizing pandas package dataframe and plot left a lot to be desired. With a little researching I found a much slicker presentation out of the box with Plotly. The <a href="https://github.com/plotly/plotlyjs-flask-example">
+                        example code</a> provided by plotly for use in flask was the exact thing I needed. I'm definitely impressed by the ease of use and quality of plotly and will visit it again in another post.</p>
+                <p>The last thing I did for this was to set up the script to run on boot, in case of power loss on the pi it would continue logging points asap. In windows it's a lot easier to just add things to the startup folder and they just run on boot. From what I could find,
+                doing a similar thing for linux is a little more involved. I ended up just adding the path to my script to the rc.local file in /etc directory. Unfortunately I had to use vi, and that's always a struggle, I had the shortcut commands open on my second monitor.
+                After adding the entry to run my script in that file, I rebooted my pi and it started logging data automatically without me having to ssh in and kick off the script!</p>
+<hr>
                 <p class="lead">Cleaning up this site.</p>
                 <p> Posted on March 6, 2017 at 7:00 PM</p>
                 <p>So this site is hosted on a flask server, specifically one of the many running

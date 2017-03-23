@@ -54,3 +54,5 @@ __pycache__/
 /mySite
 
 /.idea
+/secrets.py
+secrets.py

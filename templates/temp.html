@@ -1,7 +1,7 @@
 {% block body %}
   <ul class=entries>
   {% for entry in entries %}
-    <li>Temperature: {{ entry[1] }} Humidity: {{ entry[2] }} Time: {{ entry[3] }}
+    <li>Temperature: {{ entry[1] }} Humidity: {{ entry[2] }} Time: {{ entry[3] }} Source: {{ entry[4][0] }}
       </li>
   {% endfor %}
   </ul>
