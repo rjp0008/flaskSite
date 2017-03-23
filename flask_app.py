@@ -1,15 +1,17 @@
-from io import BytesIO
-from flask import make_response, Flask, jsonify, render_template, request
-import sqlite3
 import datetime
+import http.client
+import sqlite3
+from io import BytesIO
+
+from flask import make_response, Flask, render_template, request
 from matplotlib.backends.backend_agg import FigureCanvas
 from matplotlib.dates import DateFormatter
 from matplotlib.figure import Figure
-from pandas import date_range, Series
-from intergraph.intergraph import random_member_response
-import http.client
+from pandas import Series
+
 import rasberry_pi.routes
 import secrets
+from intergraph.intergraph import random_member_response
 
 app = Flask(__name__)
 
@@ -26,7 +28,6 @@ def random_route():
     return random_member_response(request.form['user_name'], request.form['text'])
 
 
-
 @app.route('/hotels/')
 @app.route('/hotels/<group>/<category>')
 @app.route('/hotels/<group>')
@@ -36,12 +37,12 @@ def show_entries(group=None, category=None):
     data = ()
     if group or category:
         if category:
-            sql_string = sql_string + " WHERE hotel_group=? and category=?"
-            data = ((group), (category))
+            sql_string += " WHERE hotel_group=? and category=?"
+            data = (group, category)
         else:
-            sql_string = sql_string + " WHERE hotel_group=?"
-            data = ((group),)
-    cur = db.execute(sql_string, (data))
+            sql_string += " WHERE hotel_group=?"
+            data = (group,)
+    cur = db.execute(sql_string, data)
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
@@ -63,18 +64,18 @@ def south(group=None, category=None):
 def geographic_finder(max: bool, group=None, category=None):
     db = sqlite3.connect('hotel.db')
     type = "max"
-    if max == False:
+    if not max:
         type = "min"
     sql_string = "select " + type + "(lat) from Hotels"
     data = ()
     if group or category:
         if category:
-            sql_string = sql_string + " where hotel_group=? and category=?"
-            data = ((group), (category))
+            sql_string += " where hotel_group=? and category=?"
+            data = (group, category)
         else:
-            sql_string = sql_string + " where hotel_group=?"
-            data = ((group),)
-    cur = db.execute(sql_string, (data))
+            sql_string += " where hotel_group=?"
+            data = (group,)
+    cur = db.execute(sql_string, data)
     lat = cur.fetchone()[0]
     print(lat)
     cur = db.execute("SELECT * from Hotels WHERE lat='" + str(lat) + "'")
@@ -87,10 +88,8 @@ def geographic_finder(max: bool, group=None, category=None):
 def detail(id: str = '0'):
     db = sqlite3.connect('hotel.db')
     sql_string = "select * from Hotels WHERE id=?"
-    cur = db.execute(sql_string, ((id),))
+    cur = db.execute(sql_string, (id,))
     entry = cur.fetchone()
-    # site = requests.get('https://maps.googleapis.com/maps/api/staticmap?center='+str(entry[3])+','+str(entry[4])+'&zoom=12&size=400x400&key=AIzaSyDXz9d7haybjrPP6iL2V0yknNb-aKwyK8w')
-
     return render_template('hotel_detail.html', entry=entry)
 
 
@@ -99,7 +98,7 @@ def templog(humidity=None, temperature=None, source="rp"):
     db = sqlite3.connect('temp.db')
     c = db.cursor()
     sql_string = "insert into TempData (temperature, humidity, date,source) values (?,?,?,?)"
-    data = ((temperature), (humidity), (datetime.datetime.now()),source)
+    data = (temperature, humidity, (datetime.datetime.now()), source)
     c.execute(sql_string, data)
     db.commit()
     db.close()
@@ -110,11 +109,8 @@ def smoother(input):
     output = []
     for x in range(0, len(input)):
         slice_array = input[x - 2:x + 3]
-        for item in slice_array:
-            if item == 0:
-                item = input[x]
         average = sum(slice_array)
-        average = average / 5
+        average /= 5
         if len(slice_array) == 5:
             output.append(average)
     return output
@@ -124,7 +120,7 @@ def smoother(input):
 def tempmap():
     db = sqlite3.connect('temp.db')
     c = db.cursor()
-    sql_string = "select * from TempData"  # " WHERE date > '" + str(datetime.datetime.now() - datetime.timedelta(hours=24))+"'"
+    sql_string = "select * from TempData"
     data = c.execute(sql_string)
     db.commit()
     entries = data.fetchall()
@@ -153,7 +149,7 @@ def tempmap2(hours=None):
     db = sqlite3.connect('temp.db')
     c = db.cursor()
     sql_string = "select * from TempData"
-    if hours != None:
+    if hours is not None:
         sql_string = sql_string + " WHERE date > '" + str(
             datetime.datetime.now() - datetime.timedelta(hours=int(hours))) + "'"
     data = c.execute(sql_string)
@@ -168,8 +164,8 @@ def tempmap2(hours=None):
         time.append(datetime.datetime.strptime(x[3], "%Y-%m-%d %H:%M:%S.%f") - datetime.timedelta(hours=6))
     fig = Figure()
     ax = fig.add_subplot(111)
-    t, = ax.plot_date(time, (temps), '-', label="t")
-    h, = ax.plot_date(time, (hum), '-', label="h")
+    t, = ax.plot_date(time, temps, '-', label="t")
+    h, = ax.plot_date(time, hum, '-', label="h")
     ax.legend([t, h], ["Temperature (C)", "Humidity (0-100%)"], loc=3)
     ax.xaxis.set_major_formatter(DateFormatter('%m-%d %I:%M'))
     fig.autofmt_xdate()
@@ -196,7 +192,9 @@ def brett_is_lazy():
 
     conn = http.client.HTTPSConnection("discordapp.com")
 
-    payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"content\"\r\n\r\n"+str(data['text']) + " - "+str(data['name'])+"\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"username\"\r\n\r\nlazy_brett\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
+    payload = "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"content\"\r\n\r\n" + str(
+        data['text']) + " - " + str(data[
+                                        'name']) + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"username\"\r\n\r\nlazy_brett\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--"
     payload = payload.encode('utf-8')
 
     headers = {
@@ -214,6 +212,7 @@ def brett_is_lazy():
     print(data.decode("utf-8"))
     return ""
 
+
 @app.route('/tempMap3/')
 @app.route('/tempMap3/hours=<hours>')
 def temptesting(hours=None):
@@ -230,7 +229,7 @@ def temptesting(hours=None):
     db = sqlite3.connect('temp.db')
     c = db.cursor()
     sql_string = "select * from TempData"
-    if hours != None:
+    if hours is not None:
         sql_string = sql_string + " WHERE date > '" + str(
             datetime.datetime.now() - datetime.timedelta(hours=int(hours))) + "'"
     data = c.execute(sql_string)
