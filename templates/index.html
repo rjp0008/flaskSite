@@ -22,7 +22,23 @@
                 <hr>
                 <img class="img-responsive" src="/static/me.JPG" alt="">
       <hr>
-                 <p class="lead">Gathering data from WeatherUnderground and plotting with Plotly </p>
+                 <p class="lead">Refining a tool for /r/churning </p>
+                <p> Posted on April 30, 2017 at 7:00 PM</p>
+                <p>It's been a while since I posted anything here, I think I got off to a good start but slacked on updates
+                through the month of April. My current goal is to have at three updates or posts on herea month, but a bare minimum of one. I'll make the goal this thime, just barely.
+                </p>
+                <p>I have a <a href="https://github.com/rjp0008/referralChecker">repository</a> on github of a referral checker for <a href="http://www.reddit.com/r/churning">/r/churning</a> that I hoped to use to catch when the wrong offers are posted
+                to referral threads.</p>
+                <p>I've done some basic work here with the python library PRAW, but it was really just some inital testing and sandboxing. Coming back to this code made me realize how important well commented and refactored code can be.
+                Going through and debugging the test script is a great reminder of the track I was on 2-3 months ago when I last worked on this. The first thing it does is go to the referrals wiki page and get all the links for the individual referral threads.
+                Then it searches for the platinum delta referral thread, because that was the starting point I wanted to use, as many links here were the 35k bonus when a 70k bonus was available. All the comments in the thread are traversed, which are all just links to
+                American Express application pages. Then the text of the application page is put into a dictionary counter that adds one for each instance of the application page landing text. After all this data is scraped the text is compared with difflib library to get the offers.</p>
+                <p>In researching some more this evening I found that the rankt sire does some of this already. For example the Delta platinum referral page has everything linked grouped into point bonuses. Most people have linked the 50k application but there were two links for the
+                plain American Express platinum card. I reached out to these users so they could correct their post and to the creator of rankt top see if anything was being developed to fix this. I could extend my code into checking for this now. But I'm going to wait a bit for a response
+                in case he is already implementing a fix.</p>
+                <p>With that I'm going to cut today's post short, but I think this week I'll either extend my code to check and make sure the product linked in referral threads is the correct one or get back to the <a href="https://github.com/rjp0008/hoteldata">hotel tracking platform</a>.</p>
+                <hr>
+                <p class="lead">Gathering data from WeatherUnderground and plotting with Plotly </p>
                 <p> Posted on March 17, 2017 at 7:00 PM</p>
                 <p>So recently I set up a Rasberry Pi in my home office to log data from a DHT11 sensor. This is a budget
                 sensor that can get temperature and humidity data at 1 hz. That is plenty enough data for me, unfortunately
