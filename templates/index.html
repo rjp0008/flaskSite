@@ -21,6 +21,26 @@
 
                 <hr>
                 <img class="img-responsive" src="/static/me.JPG" alt="">
+                      <hr>
+                 <p class="lead">Consuming a Google Sheets page as a DB</p>
+                <p> Posted on May 21, 2017 at 4:00 PM</p>
+                <p>Once again it's been a couple weeks since updating. So I wanted to get back into the swing of things here by working on just a simple locally hosted website.
+                 It's going to be a simple website for my parents to use since I pay their bills online and they reimburse me. I wanted to give them a html page they could have
+                 on their machine that would just load the latest bills I've paid without them. Sure they could just use the google sheets sharable page but where's the challenge in that?</p>
+                <p>Unfortunately this page won't be in any of my repo's for now, and will continue not to be unless I end up extending it to me more useful and scrub the private information out.</p>
+                <p>I knew I had heard of using Google Sheets as a backend database before for simple projects so I did a couple searches. The first thing I found was blockspring.com however I'm
+                not really interested in a subscription fee so that was a non-starter. The <a href="https://coderwall.com/p/duapqq/use-a-google-spreadsheet-as-your-json-backend">
+                second result </a>I found seemed fine for my current use case. All this required was publishing my Sheet with a read only link, and pasting the document key into a url request.
+                 Visiting this url showed the json in my browser and I checked to make sure it was valid json.</p>
+                <p>We have the <i>"database"</i> now.</p>
+                <p>From here, I began with a barebones .html page and imported bootstrap and jQuery from CDNs. I added a table that will host the information with columns for company, date paid, date due,
+                    and amount. I created a .js file to handle the ajax requests and populate said table. The ajax request happens on load and performs a GET request to the Google Sheets URL
+                I have already established. Parsing this response as a JSON object allowed me to navigate down to the entry object, which are the rows of
+                the sheet. I could see if the reimbursed tag was marked and ignore entries that have already been paid. From there it was a insertRow call on the table and then insertCell calls on the row to get the data into the page.
+                I added an accumulator on the amounts being parsed so I can have a total at the bottom of the amounts column. As soon as I put out this data I got <a href="http://www.smbc-comics.com/?id=2999">3062.1400000000003</a>.
+                    Adding a decimal format to this value got a valid amount of money. And now I have my simple site with a Google Sheets backend!</p>
+
+
       <hr>
                  <p class="lead">Refining a tool for /r/churning </p>
                 <p> Posted on April 30, 2017 at 7:00 PM</p>
