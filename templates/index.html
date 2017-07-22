@@ -22,8 +22,26 @@
                 <hr>
                 <img class="img-responsive" src="/static/me.JPG" alt="">
                       <hr>
-                 <p class="lead">Consuming a Google Sheets page as a DB</p>
-                <p> Posted on May 21, 2017 at 4:00 PM</p>
+                 <p class="lead">Exploring OpenCV</p>
+                <p>July 22, 2017 at 3:00 PM</p>
+                <p> Recently, I have spent some time playing around with OpenCV in python testing out some image recognition capabilities of the library, and consuming various hardware streams.
+                    I thought that creating a home security-ish solution could be a fun project. After some initial investigations with OpenCV following tutorials like the one <a href="http://www.pyimagesearch.com/2015/11/09/pedestrian-detection-opencv/">here</a>
+                     I decided to pursue it further. My Dad had mentioned in the past that he wanted to set up a security camera in his shed to monitor his tools, as he's been burgled before. So I figured this was something I could attempt for the experience and
+                figured I would save him a bit in subscription costs as compared to the cloud solutions he had seen. An old android phone or webcam probably wouldn't cut it for this project though as night vision would be an issue along with image quality. I settled on the Vimtag VT-361
+                 wifi enabled security, I figured I could consume the stream as easily as IP camera or my webcam, but did I end up being wrong.</p>
+                <p>Getting data from the camera was the first major initial roadblock. The web interface is a flash player that I couldn't quite figure out the stream out and the alternative video feed was an installed ActiveX control, neither of these were great options. Luckily there is a
+                snapshot button on the web interface that brought up a window of the latest screen cap. Inspecting this element led me to the url I can hit that exposes the picture via a jpg. Now I'm in business, I was able to run this jpg through the initial people detecting algorithm that
+                played around with earlier, unfortunately it detected some objects in the picture as people too. I needed a better solution. </p>
+                <p>Template matching was the answer I am currently settled upon. After exploring the docs for OpenCV there was a <a href="http://docs.opencv.org/trunk/d4/dc6/tutorial_py_template_matching.html">handy example</a> for pattern matching and recognizing templates in a photo.
+                    I printed out a large QR code to tape to the back of the door that would serve ar the template and could fed the latest snapshots into this algorithm to detect the missing or moved QR code. This was a lot more reliable that the human detection. After setting it to capture images infrequently
+                to capture data points to make sure it works at all times of day I realized that all my photos after a certain period were the same. I manually visited the URL page again and it was the same image as the others I have saved. After logging in again to see the snapshot and inspeccting the element
+                I realized what happened. There is some expiring token passed in the url I suppose as an added security measure, as far as I can tell it's just a randomly generated string. So I had to automate grabbing the latest image url, unfortunately the website was giving me a lot of trouble with
+                google chrome selinium and I didn't want to have a browser pop up randomly anyways. PhantomJS came to the rescue, it's a super lightweight selenium compatible browser with an invisible mode compatible with this proprietary security camera website.</p>
+                <p>The next step will be to have a watchdog process and make sure the analysis is always online, sending alerts as sms and then possibly a native app. I expect to update on the progress soon.</p>
+
+                      <hr>
+                 <p class="lead">Consuming a Google Sheets page as a data store</p>
+                <p> May 21, 2017 at 4:00 PM</p>
                 <p>Once again it's been a couple weeks since updating. So I wanted to get back into the swing of things here by working on just a simple locally hosted website.
                  It's going to be a simple website for my parents to use since I pay their bills online and they reimburse me. I wanted to give them a html page they could have
                  on their machine that would just load the latest bills I've paid without them. Sure they could just use the google sheets sharable page but where's the challenge in that?</p>
@@ -43,7 +61,7 @@
 
       <hr>
                  <p class="lead">Refining a tool for /r/churning </p>
-                <p> Posted on April 30, 2017 at 7:00 PM</p>
+                <p> April 30, 2017 at 7:00 PM</p>
                 <p>It's been a while since I posted anything here, I think I got off to a good start but slacked on updates
                 through the month of April. My current goal is to have at three updates or posts on here a month, but a bare minimum of one. I'll make the goal this thime, just barely.
                 </p>
@@ -91,7 +109,7 @@
                 After adding the entry to run my script in that file, I rebooted my pi and it started logging data automatically without me having to ssh in and kick off the script!</p>
 <hr>
                 <p class="lead">Cleaning up this site.</p>
-                <p> Posted on March 6, 2017 at 7:00 PM</p>
+                <p> March 6, 2017 at 7:00 PM</p>
                 <p>So this site is hosted on a flask server, specifically one of the many running
                     at <a href="https://www.pythonanywhere.com">pythonanywhere.com</a>.
                     It's been a great (and cheap) resource, but in tooling around and just doing things for fun has resulted in my folder
@@ -126,7 +144,7 @@
                 <hr>
 
                 <p class="lead">Starting a development blog for my adventures in coding and scripting.</p>
-                <p> Posted on March 5, 2017 at 3:00 PM</p>
+                <p> March 5, 2017 at 3:00 PM</p>
                 <p>I finally decided to start a personal site after reading other people's and using them as very helpful resources.
                 Hopefully something I post here will be as useful as the things I've read in the past.</p>
                 <p>I expect many of my initial blog posts will be summations of the work I've already done as part of different sites hosted here.
