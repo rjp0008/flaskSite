@@ -24,29 +24,29 @@
                       <hr>
                  <p class="lead">Exploring OpenCV</p>
                 <p>July 22, 2017 at 3:00 PM</p>
-                <p> Recently, I have spent some time playing around with OpenCV in python testing out some image recognition capabilities of the library, and consuming various hardware streams.
+                <p> Recently, I have spent some time playing around with OpenCV in python testing out some image recognition capabilities of the library and consuming various hardware streams.
                     I thought that creating a home security-ish solution could be a fun project. After some initial investigations with OpenCV following tutorials like the one <a href="http://www.pyimagesearch.com/2015/11/09/pedestrian-detection-opencv/">here</a>
-                     I decided to pursue it further. My Dad had mentioned in the past that he wanted to set up a security camera in his shed to monitor his tools, as he's been burgled before. So I figured this was something I could attempt for the experience and
-                figured I would save him a bit in subscription costs as compared to the cloud solutions he had seen. An old android phone or webcam probably wouldn't cut it for this project though as night vision would be an issue along with image quality. I settled on the Vimtag VT-361
-                 wifi enabled security, I figured I could consume the stream as easily as IP camera or my webcam, but did I end up being wrong.</p>
-                <p>Getting data from the camera was the first major initial roadblock. The web interface is a flash player that I couldn't quite figure out the stream out and the alternative video feed was an installed ActiveX control, neither of these were great options. Luckily there is a
+                     I decided to pursue it further. My dad had mentioned in the past that he wanted to set up a security camera in his shed to monitor his tools, as he's been burgled before. So I figured this was something I could attempt for the experience and
+                figured I would save him a bit in subscription costs as compared to the cloud solutions he had seen. An old android phone or web cam probably wouldn't cut it for this project, though, as night vision would be an issue along with image quality. I settled on the Vimtag VT-361
+                 wifi enabled security, I figured I could consume the stream as easily as IP camera or my web cam, but unfortunately ended up bring wrong.</p>
+                <p>Getting data from the camera was the first major initial roadblock. The web interface is a flash player that I couldn't quite figure how to capture the stream and the alternative video feed was an installed ActiveX control, neither of these were great options. Luckily there is a
                 snapshot button on the web interface that brought up a window of the latest screen cap. Inspecting this element led me to the url I can hit that exposes the picture via a jpg. Now I'm in business, I was able to run this jpg through the initial people detecting algorithm that
                 played around with earlier, unfortunately it detected some objects in the picture as people too. I needed a better solution. </p>
-                <p>Template matching was the answer I am currently settled upon. After exploring the docs for OpenCV there was a <a href="http://docs.opencv.org/trunk/d4/dc6/tutorial_py_template_matching.html">handy example</a> for pattern matching and recognizing templates in a photo.
-                    I printed out a large QR code to tape to the back of the door that would serve ar the template and could fed the latest snapshots into this algorithm to detect the missing or moved QR code. This was a lot more reliable that the human detection. After setting it to capture images infrequently
+                <p>Template matching is the answer I am currently settled upon. After exploring the docs for OpenCV there was a <a href="http://docs.opencv.org/trunk/d4/dc6/tutorial_py_template_matching.html">handy example</a> for pattern matching and recognizing templates in a photo.
+                    I printed out a large QR code to tape to the back of the door that would serve as the template and could fed the latest snapshots into this algorithm to detect the missing or moved QR code. This was a lot more reliable that the human detection. After setting it to capture images infrequently
                 to capture data points to make sure it works at all times of day I realized that all my photos after a certain period were the same. I manually visited the URL page again and it was the same image as the others I have saved. After logging in again to see the snapshot and inspeccting the element
-                I realized what happened. There is some expiring token passed in the url I suppose as an added security measure, as far as I can tell it's just a randomly generated string. So I had to automate grabbing the latest image url, unfortunately the website was giving me a lot of trouble with
+                I realized what happened. There is an expiring token passed in the url, I suppose as an added security measure, and as far as I can tell it's just a randomly generated string. So I had to automate grabbing the latest image url, unfortunately the website was giving me a lot of trouble with
                 google chrome selinium and I didn't want to have a browser pop up randomly anyways. PhantomJS came to the rescue, it's a super lightweight selenium compatible browser with an invisible mode compatible with this proprietary security camera website.</p>
-                <p>The next step will be to have a watchdog process and make sure the analysis is always online, sending alerts as sms and then possibly a native app. I expect to update on the progress soon.</p>
+                <p>The next step will be to have a watchdog process and make sure the analysis is always online, sending alerts as sms and then possibly a native app.</p>
 
                       <hr>
                  <p class="lead">Consuming a Google Sheets page as a data store</p>
                 <p> May 21, 2017 at 4:00 PM</p>
                 <p>Once again it's been a couple weeks since updating. So I wanted to get back into the swing of things here by working on just a simple locally hosted website.
                  It's going to be a simple website for my parents to use since I pay their bills online and they reimburse me. I wanted to give them a html page they could have
-                 on their machine that would just load the latest bills I've paid without them. Sure they could just use the google sheets sharable page but where's the challenge in that?</p>
-                <p>Unfortunately this page won't be in any of my repo's for now, and will continue not to be unless I end up extending it to me more useful and scrub the private information out.</p>
-                <p>I knew I had heard of using Google Sheets as a backend database before for simple projects so I did a couple searches. The first thing I found was blockspring.com however I'm
+                 on their machine that would just load the latest bills I've paid without them. Sure, they could just use the google sheets sharable page but where's the challenge in that?</p>
+                <p>Unfortunately, this page won't be in any of my repo's for now and will continue not to be unless I end up extending it to be more useful and scrub the private information out.</p>
+                <p>I knew I had heard of using Google Sheets as a backend database before for simple projects so I did a couple of searches. The first thing I found was blockspring.com however I'm
                 not really interested in a subscription fee so that was a non-starter. The <a href="https://coderwall.com/p/duapqq/use-a-google-spreadsheet-as-your-json-backend">
                 second result </a>I found seemed fine for my current use case. All this required was publishing my Sheet with a read only link, and pasting the document key into a url request.
                  Visiting this url showed the json in my browser and I checked to make sure it was valid json.</p>
@@ -56,22 +56,22 @@
                 I have already established. Parsing this response as a JSON object allowed me to navigate down to the entry object, which are the rows of
                 the sheet. I could see if the reimbursed tag was marked and ignore entries that have already been paid. From there it was a insertRow call on the table and then insertCell calls on the row to get the data into the page.
                 I added an accumulator on the amounts being parsed so I can have a total at the bottom of the amounts column. As soon as I put out this data I got <a href="http://www.smbc-comics.com/?id=2999">3062.1400000000003</a>.
-                    Adding a decimal format to this value got a valid amount of money. And now I have my simple site with a Google Sheets backend!</p>
+                    Adding a decimal format to this value got a valid amount of money and now I have my simple site with a Google Sheets backend!</p>
 
 
       <hr>
                  <p class="lead">Refining a tool for /r/churning </p>
                 <p> April 30, 2017 at 7:00 PM</p>
                 <p>It's been a while since I posted anything here, I think I got off to a good start but slacked on updates
-                through the month of April. My current goal is to have at three updates or posts on here a month, but a bare minimum of one. I'll make the goal this thime, just barely.
+                throughout the month of April. My current goal is to have at least three updates or posts on here a month, but a bare minimum of one. I'll make the goal this time, just barely.
                 </p>
                 <p>I have a <a href="https://github.com/rjp0008/referralChecker">repository</a> on github of a referral checker for <a href="http://www.reddit.com/r/churning">/r/churning</a> that I hoped to use to catch when the wrong offers are posted
                 to referral threads.</p>
-                <p>I've done some basic work here with the python library PRAW, but it was really just some inital testing and sandboxing. Coming back to this code made me realize how important well commented and refactored code can be.
+                <p>I've done some basic work here with the python library PRAW, but it was really just some initial testing and sandboxing. Coming back to this code made me realize how important well commented and refactored code can be.
                 Going through and debugging the test script is a great reminder of the track I was on 2-3 months ago when I last worked on this. The first thing it does is go to the referrals wiki page and get all the links for the individual referral threads.
                 Then it searches for the platinum delta referral thread, because that was the starting point I wanted to use, as many links here were the 35k bonus when a 70k bonus was available. All the comments in the thread are traversed, which are all just links to
                 American Express application pages. Then the text of the application page is put into a dictionary counter that adds one for each instance of the application page landing text. After all this data is scraped the text is compared with difflib library to get the offers.</p>
-                <p>In researching some more this evening I found that the rankt sire does some of this already. For example the Delta platinum referral page has everything linked grouped into point bonuses. Most people have linked the 50k application but there were two links for the
+                <p>In my research, I found that the rankt sire does some of this already. For example, the Delta platinum referral page has everything linked grouped into point bonuses. Most people have linked the 50k application but there were two links for the
                 plain American Express platinum card. I reached out to these users so they could correct their post and to the creator of rankt top see if anything was being developed to fix this. I could extend my code into checking for this now. But I'm going to wait a bit for a response
                 in case he is already implementing a fix.</p>
                 <p>With that I'm going to cut today's post short, but I think this week I'll either extend my code to check and make sure the product linked in referral threads is the correct one or get back to the <a href="https://github.com/rjp0008/hoteldata">hotel tracking platform</a>.</p>
@@ -100,7 +100,7 @@
                 <p>After decoding the response from this http request into a json object I was able to index it for the ['temp_c'] and ['relative_humidity'] data. I noticed that this API also gives you data in Fahrenheit,
                 which will end up being more precise as it looks like both C and F datapoints are only to the tenths decimal place. However all the current data points are in C so I'll have to convert the value to match the old data.
                 The conversion factor is tC = (tF - 32) * 5 / 9, which I almost remembered, but had to double check online to be sure. So after I had this data I piped it into another http request to this site, which logs the data passed
-                into a SQLite database. The only data fieldss I keep track of right now are temperture, humidity, and location(inside or outside).</p>
+                into a SQLite database. The only data fields I keep track of right now are temperture, humidity, and location(inside or outside).</p>
                 <p>Data is being logged from two points 24/7, and I wanted to graph these things against each other. Now I already have the display endpoint mentioned earlier for just the inside data, but now I need to add the new data points
                 into the graphs. My initial display engine utilizing pandas package dataframe and plot left a lot to be desired. With a little researching I found a much slicker presentation out of the box with Plotly. The <a href="https://github.com/plotly/plotlyjs-flask-example">
                         example code</a> provided by plotly for use in flask was the exact thing I needed. I'm definitely impressed by the ease of use and quality of plotly and will visit it again in another post.</p>
@@ -112,8 +112,8 @@
                 <p> March 6, 2017 at 7:00 PM</p>
                 <p>So this site is hosted on a flask server, specifically one of the many running
                     at <a href="https://www.pythonanywhere.com">pythonanywhere.com</a>.
-                    It's been a great (and cheap) resource, but in tooling around and just doing things for fun has resulted in my folder
-                    and file organization becoming a mess. All of my routes are in one main flask app, and the three projects
+                    It's been a great (and cheap) resource, but by tooling around and just doing things for fun has resulted in my folder
+                    and file organization becoming a mess. All of my routes are in one main flask app and the three projects
                     I have going are all over the place in that file.
                 </p>
                 <p>Another issue with my current development path is that not much of it is in source control. I was just tooling
@@ -132,7 +132,7 @@
                 pretty simple, it will return a random person on the team in a json formatted response. This
                 ties into slacks webhoob functionality to give use a /random slash command in any slack channel. Mostly this
                 is used to make someone finally getting around to doing a code review. There are some bonuses to the slash
-                command though, it will remove the requester from the pool of output options, because you can't do your own
+                command though, it will remove the requester from the pool of output options because you can't do your own
                 code review. Also you can @tag or :emojii: tag people on the team to get them removed from the pool,
                 if they've already done one of the reviews.</p>
                 <p>In refactoring this slash command I've realized that now there is no way to arbitrarily choose any person on
